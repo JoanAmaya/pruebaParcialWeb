@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProyectoModule } from './proyecto/proyecto.module';
+import { EstudianteModule } from './estudiante/estudiante.module';
+import { PropuestaModule } from './propuesta/propuesta.module';
+import { ProfesorModule } from './profesor/profesor.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -15,6 +19,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       dropSchema: true,
       synchronize: true,
     }),
+    ProyectoModule,
+    EstudianteModule,
+    PropuestaModule,
+    ProfesorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
