@@ -1,0 +1,211 @@
+/* eslint-disable prettier/prettier */
+/* archivo: src/museum/museum.entity.ts */
+import { ArtworkEntity } from '../artwork/artwork.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ExhibitionEntity } from '../exhibition/exhibition.entity';
+
+@Entity()
+export class MuseumEntity {
+   @PrimaryGeneratedColumn('uuid')
+   id: string;
+
+   @Column()
+   name: string;
+   @Column()
+   description: string;
+   @Column()
+   address: string;
+   @Column()
+   city: string;
+   @Column()
+   image: string;
+
+   @OneToMany(() => ExhibitionEntity, exhibition => exhibition.museum)
+   exhibitions: ExhibitionEntity[];
+
+   @OneToMany(() => ArtworkEntity, artwork => artwork.museum)
+   artworks: ArtworkEntity[];
+
+}
+
+
+/* archivo: src/museum/museum.entity.ts */
+
+
+
+
+
+
+/* eslint-disable prettier/prettier */
+/* archivo: src/exhibition/exhibition.entity.ts */
+import { ArtworkEntity } from "../artwork/artwork.entity";
+import { MuseumEntity } from "../museum/museum.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { SponsorEntity } from "../sponsor/sponsor.entity";
+
+@Entity()
+export class ExhibitionEntity {
+   @PrimaryGeneratedColumn("uuid")
+   id: string;
+   @Column()
+   name: string;
+   @Column()
+   description: string;
+   @ManyToOne(() => MuseumEntity, museum => museum.exhibitions)
+   museum: MuseumEntity;
+   @OneToMany(() => ArtworkEntity, artwork => artwork.exhibition)
+   artworks: ArtworkEntity[];
+
+   @OneToOne(() => SponsorEntity, sponsor => sponsor.exhibition)
+   @JoinColumn()
+   sponsor: SponsorEntity;
+}
+
+
+
+
+/* eslint-disable prettier/prettier */
+/* archivo: src/artwork/artwork.entity.ts */
+import { ExhibitionEntity } from "../exhibition/exhibition.entity";
+import { MuseumEntity } from "../museum/museum.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ImageEntity } from "../image/image.entity";
+import { ArtistEntity } from "../artist/artist.entity";
+
+@Entity()
+export class ArtworkEntity {
+
+   @PrimaryGeneratedColumn("uuid")
+   id: string;
+   @Column()
+   name: string;
+   @Column()
+   year: number;
+   @Column()
+   description: string;
+   @Column()
+   type: string;
+   @Column()
+   mainImage: string;
+
+   @ManyToOne(() => MuseumEntity, museum => museum.artworks)
+   museum: MuseumEntity;
+
+   @ManyToOne(() => ExhibitionEntity, exhibition => exhibition.artworks)
+   exhibition: ExhibitionEntity;
+
+   @OneToMany(() => ImageEntity, image => image.artwork)
+   images: ImageEntity[];
+
+   @ManyToOne(() => ArtistEntity, artist => artist.artworks)
+   artist: ArtistEntity;
+}
+
+
+
+
+
+/* eslint-disable prettier/prettier */
+/* archivo: src/artist/artist.entity.ts */
+import { ArtworkEntity } from "../artwork/artwork.entity";
+import { MovementEntity } from "../movement/movement.entity";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity()
+export class ArtistEntity {
+   @PrimaryGeneratedColumn("uuid")
+   id: string;
+   @Column()
+   name: string;
+   @Column()
+   birthplace: string;
+   @Column()
+   birthdate: Date;
+   @Column()
+   image: string;
+
+   @OneToMany(() => ArtworkEntity, artwork => artwork.artist)
+   artworks: ArtworkEntity[];
+
+   @ManyToMany(() => MovementEntity, movement => movement.artists)
+   movements: MovementEntity[];
+
+}
+
+
+
+
+
+
+/* eslint-disable prettier/prettier */
+/* archivo: src/sponsor/sponsor.entity.ts */
+import { ExhibitionEntity } from "../exhibition/exhibition.entity";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity()
+export class SponsorEntity {
+   @PrimaryGeneratedColumn("uuid")
+   id: string;
+   @Column()
+   name: string;
+   @Column()
+   description: string;
+   @Column()
+   website: string;
+
+   @OneToOne(() => ExhibitionEntity, exhibition => exhibition.sponsor)
+   exhibition: ExhibitionEntity;
+
+}
+
+
+
+
+/* eslint-disable prettier/prettier */
+/* archivo: src/image/image.entity.ts */
+import { ArtworkEntity } from "../artwork/artwork.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity()
+export class ImageEntity {
+   @PrimaryGeneratedColumn("uuid")
+   id: string;
+   @Column()
+   source: string;
+   @Column()
+   altText: string;
+   @Column()
+   height: number;
+   @Column()
+   width: number;
+
+   @ManyToOne(() => ArtworkEntity, artwork => artwork.images)
+   artwork: ArtworkEntity;
+}
+
+
+
+
+
+
+/* eslint-disable prettier/prettier */
+/* archivo: src/movement/movement.entity.ts */
+import { ArtistEntity } from "../artist/artist.entity";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity()
+export class MovementEntity {
+   @PrimaryGeneratedColumn("uuid")
+   id: string;
+   @Column()
+   name: string;
+   @Column()
+   description: string;
+ 
+   @Column()
+   countryOfOrigin: string;
+
+   @ManyToMany(() => ArtistEntity, artist => artist.movements)
+   @JoinTable()
+   artists: ArtistEntity[];
+}
